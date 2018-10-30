@@ -1,0 +1,230 @@
+package example;
+
+import java.io.BufferedReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.URL;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
+
+public class JDD {
+	String jdd_samples;
+	int codic_v1 = 0, codic_v2 = 0, codic_colissimo = 0, codic_chronopost = 0,
+			codic_chronorelais = 0, codic_livrable = 0, codic_gls = 0,
+			codic_relaiscolis = 0;
+
+	// Constructeur par défaut : lire les données de la dispo sinon de la sauvegarde du fichier en local 
+	public JDD() throws IOException {
+		String ligne, JSON_DATA1 = "";
+		BufferedReader r = new BufferedReader(new InputStreamReader(new URL(
+				"http://xv42i351:8080/samples").openStream()));
+		
+				if (r.ready()) {
+			// Lire le contenu de la dispo 													
+		while ((ligne = r.readLine()) != null) {
+			JSON_DATA1 += ligne;
+		}
+		r.close();
+				}
+				else {
+					// lire du fichier local
+					try{
+						InputStream flux=new FileInputStream("\\"+"\\NETAPPI354a\\Bureautique_SXI521\\Toutc\\vente-logistique\\2 - INTEGRATION - RECETTE MOE\\08- AUTOM\\JDD\\input_jdd.json"); 
+						InputStreamReader lecture=new InputStreamReader(flux);
+						BufferedReader buff=new BufferedReader(lecture);
+						String ligne_local = "";
+						while ((ligne_local=buff.readLine())!=null){
+							JSON_DATA1 += ligne_local;
+						}
+						buff.close(); 
+						}		
+						catch (Exception e){
+						System.out.println(e.toString());
+						}
+					
+				}
+		// stocker le contenu du json dans jdd_samples
+		jdd_samples = "{" + "  \"Jdd\":" + JSON_DATA1 + "}";
+		final JSONObject obj = new JSONObject(jdd_samples);
+		final JSONArray geodata = obj.getJSONArray("Jdd");
+		final int n = geodata.length();
+		int compteur = 0;
+		// parcours du json
+		for (int j = 0; j < n; ++j) {
+			if (compteur == 8)
+				break;
+
+			final JSONObject codic_json = geodata.getJSONObject(j);
+			if (codic_v1 == 0
+					&& codic_json.getBoolean("isDCOM") == true
+					&& codic_json.getString("useCase").equalsIgnoreCase(
+							"ClickCollectV1")) {
+				codic_v1 = codic_json.getInt("codic");
+				compteur++;
+				continue;
+			}
+
+			if (codic_v2 == 0
+					&& codic_json.getBoolean("isDCOM") == true
+					&& codic_json.getString("useCase").equalsIgnoreCase(
+							"ClickCollect")) {
+				codic_v2 = codic_json.getInt("codic");
+				compteur++;
+				continue;
+			}
+
+			if (codic_colissimo == 0
+					&& codic_json.getBoolean("isDCOM") == true
+					&& codic_json.getString("useCase").equalsIgnoreCase(
+							"Colissimo")) {
+				codic_colissimo = codic_json.getInt("codic");
+				compteur++;
+				continue;
+			}
+
+			if (codic_chronopost == 0
+					&& codic_json.getBoolean("isDCOM") == true
+					&& codic_json.getString("useCase").equalsIgnoreCase(
+							"Chrono")) {
+				codic_chronopost = codic_json.getInt("codic");
+				compteur++;
+				continue;
+			}
+
+			if (codic_chronorelais == 0
+					&& codic_json.getBoolean("isDCOM") == true
+					&& codic_json.getString("useCase").equalsIgnoreCase(
+							"ChronoRelais")) {
+				codic_chronorelais = codic_json.getInt("codic");
+				compteur++;
+				continue;
+			}
+
+			if (codic_livrable == 0
+					&& codic_json.getBoolean("isDCOM") == true
+					&& codic_json.getString("useCase").equalsIgnoreCase(
+							"DeliveryCalendarNordSud")) {
+				codic_livrable = codic_json.getInt("codic");
+				compteur++;
+				continue;
+			}
+
+			if (codic_gls == 0 && codic_json.getBoolean("isDCOM") == true
+					&& codic_json.getString("useCase").equalsIgnoreCase("Gls")) {
+				codic_gls = codic_json.getInt("codic");
+				compteur++;
+
+				continue;
+			}
+
+			if (codic_relaiscolis == 0
+					&& codic_json.getBoolean("isDCOM") == true
+					&& codic_json.getString("useCase").equalsIgnoreCase(
+							"RelaisColis")) {
+				codic_relaiscolis = codic_json.getInt("codic");
+				compteur++;
+				continue;
+			}
+		}
+				
+
+	}
+	
+	// Getters & setters
+	public int getCodic_v1() {
+		return codic_v1;
+	}
+
+
+
+	public void setCodic_v1(int codic_v1) {
+		this.codic_v1 = codic_v1;
+	}
+
+
+
+	public int getCodic_v2() {
+		return codic_v2;
+	}
+
+
+
+	public void setCodic_v2(int codic_v2) {
+		this.codic_v2 = codic_v2;
+	}
+
+
+
+	public int getCodic_colissimo() {
+		return codic_colissimo;
+	}
+
+
+
+	public void setCodic_colissimo(int codic_colissimo) {
+		this.codic_colissimo = codic_colissimo;
+	}
+
+
+
+	public int getCodic_chronopost() {
+		return codic_chronopost;
+	}
+
+
+	public void setCodic_chronopost(int codic_chronopost) {
+		this.codic_chronopost = codic_chronopost;
+	}
+
+
+
+	public int getCodic_chronorelais() {
+		return codic_chronorelais;
+	}
+
+
+
+	public void setCodic_chronorelais(int codic_chronorelais) {
+		this.codic_chronorelais = codic_chronorelais;
+	}
+
+
+
+	public int getCodic_livrable() {
+		return codic_livrable;
+	}
+
+
+
+	public void setCodic_livrable(int codic_livrable) {
+		this.codic_livrable = codic_livrable;
+	}
+
+
+
+	public int getCodic_gls() {
+		return codic_gls;
+	}
+
+
+
+	public void setCodic_gls(int codic_gls) {
+		this.codic_gls = codic_gls;
+	}
+
+
+
+	public int getCodic_relaiscolis() {
+		return codic_relaiscolis;
+	}
+
+
+
+	public void setCodic_relaiscolis(int codic_relaiscolis) {
+		this.codic_relaiscolis = codic_relaiscolis;
+	}
+
+}
